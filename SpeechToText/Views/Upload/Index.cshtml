@@ -1,0 +1,89 @@
+﻿@{
+    ViewBag.Title = "Upload File";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>@ViewBag.Title</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        h2 {
+            color: #333;
+        }
+
+        form {
+            margin-top: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            color: #555;
+        }
+
+        input[type="file"] {
+            display: none; /* Hide the default file input */
+        }
+
+        .custom-file-input {
+            display: inline-block;
+            padding: 8px 16px;
+            cursor: pointer;
+            background-color: #4CAF50; /* Green color for file input */
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+        }
+
+            .custom-file-input:hover {
+                background-color: #45a049; /* Darker green color on hover */
+            }
+
+        button {
+            background-color: #3498db; /* Blue color for the submit button */
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+            button:hover {
+                background-color: #2980b9; /* Darker blue color on hover */
+            }
+
+        p {
+            color: green;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div>
+        
+
+        <h1>Welcome to Speech to Text</h1>
+        <p>This is a simple test to welcome users to the Speech to Text application. Feel free to explore and use the features!</p>
+
+        <form action="/Upload/UploadFile" method="post" enctype="multipart/form-data">
+            <label for="file" class="custom-file-input">Choose a file</label>
+            <input type="file" name="file" id="file" accept=".mp3, .m4a" required />
+            <br /><br />
+            <button type="submit">Transcript</button>
+        </form>
+
+        @if (ViewBag.Message != null)
+        {
+            <p>@ViewBag.Message</p>
+        }
+    </div>
+
+</body>
+</html>
