@@ -1,89 +1,173 @@
-﻿@{
-    ViewBag.Title = "Upload File";
-}
-
-<!DOCTYPE html>
-<html>
+﻿<!DOCTYPE html>
+<html lang="en">
 <head>
-    <title>@ViewBag.Title</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload File</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            margin-top: 50px;
+        /* Additional styles for the modal */
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            text-align: center; /* Center-align the text content */
         }
 
-        h2 {
-            color: #333;
+        /* Additional styles for the loader */
+        #loader {
+            display: none;
+            color: #3498db;
+            font-size: 20px;
+            margin-top: 10px;
         }
 
-        form {
+        /* Progress bar styles */
+        #progress-bar {
+            display: none;
             margin-top: 20px;
         }
 
-        label {
-            display: block;
-            margin-bottom: 10px;
-            color: #555;
-        }
-
-        input[type="file"] {
-            display: none; /* Hide the default file input */
-        }
-
-        .custom-file-input {
-            display: inline-block;
-            padding: 8px 16px;
-            cursor: pointer;
-            background-color: #4CAF50; /* Green color for file input */
-            color: #fff;
-            border: none;
-            border-radius: 4px;
-        }
-
-            .custom-file-input:hover {
-                background-color: #45a049; /* Darker green color on hover */
-            }
-
-        button {
-            background-color: #3498db; /* Blue color for the submit button */
-            color: #fff;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-            button:hover {
-                background-color: #2980b9; /* Darker blue color on hover */
-            }
-
-        p {
-            color: green;
-            margin-top: 20px;
+        /* Center-align form elements */
+        .center-form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
     </style>
 </head>
-<body>
+<body class="bg-light">
 
-    <div>
-        
+    <div class="container mt-5">
+        <h1 class="text-center">Welcome to Speech to Text</h1>
+        <p class="text-center">This is a simple test to welcome users to the Speech to Text application. Feel free to explore and use the features!</p>
 
-        <h1>Welcome to Speech to Text</h1>
-        <p>This is a simple test to welcome users to the Speech to Text application. Feel free to explore and use the features!</p>
+        <!-- ... Previous HTML code ... -->
 
-        <form action="/Upload/UploadFile" method="post" enctype="multipart/form-data">
-            <label for="file" class="custom-file-input">Choose a file</label>
-            <input type="file" name="file" id="file" accept=".mp3, .m4a" required />
-            <br /><br />
-            <button type="submit">Transcript</button>
+        <form action="/Upload/UploadFile" method="post" enctype="multipart/form-data" class="mt-4 center-form">
+            <!-- Existing file input -->
+            <div class="mb-3">
+                <div class="input-group">
+                    <label class="input-group-btn">
+                        <span class="btn btn-primary rounded-0">
+                            Select File to Transcript<input type="file" style="display: none;" name="file" id="file" accept=".mp3, .m4a" onchange="displayFileName(this)" required />
+                        </span>
+                    </label>
+                    <input type="text" class="form-control rounded-0" id="file-name" readonly>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="transcription-modes" class="form-label me-3">Transcription Mode:</label>
+
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="transcriptionMode" id="transcriptionFile" value="file">
+                    <label class="form-check-label" for="transcriptionFile">File</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="transcriptionMode" id="transcriptionInline" value="inline">
+                    <label class="form-check-label" for="transcriptionInline">Inline</label>
+                </div>
+            </div>
+
+
+            <!-- Existing submit button -->
+            <button type="submit" onclick="showLoaderModal()" class="btn btn-success rounded-0">Transcript</button>
         </form>
 
+        <!-- ... Remaining HTML code ... -->
+        <!-- Modal for the loader -->
+        <div id="loaderModal" class="modal fade">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content text-center">
+                    <!-- Center-align the content -->
+                    <!-- Close button with Bootstrap variant -->
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+
+                    <!-- Loader content -->
+                    <div id="loader">Loading...</div>
+
+                    <!-- Progress bar -->
+                    <div id="progress-bar" class="progress">
+                        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Display message if available -->
         @if (ViewBag.Message != null)
         {
-            <p>@ViewBag.Message</p>
+            <!-- Stylish success message -->
+            <p class="mt-3 text-success fw-bold">@ViewBag.Message</p>
         }
     </div>
+
+    <!-- Bootstrap JS (Popper.js and Bootstrap JS) -->
+    <script src="~/js/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- JavaScript for the loader and modal functionality -->
+    <!-- JavaScript for the loader and modal functionality -->
+    <!-- Updated JavaScript for the loader and modal functionality -->
+    <script>
+        function displayFileName(input) {
+            var fileName = input.files[0].name;
+            document.getElementById('file-name').value = fileName;
+        }
+
+        function showLoaderModal() {
+            // Show the modal
+            var myModal = new bootstrap.Modal(document.getElementById('loaderModal'));
+            myModal.show();
+
+            // Show the loader
+            document.getElementById('loader').style.display = 'block';
+
+            // Show the progress bar after a delay (simulate progress)
+            setTimeout(function () {
+                document.getElementById('progress-bar').style.display = 'block';
+            }, 1000);
+
+            // You can also submit the form here if needed
+            // document.forms[0].submit();
+
+            // Simulate a progress update
+            simulateProgress();
+        }
+
+        // Function to simulate progress (incremental update)
+        function simulateProgress() {
+            var progressBar = document.querySelector('.progress-bar');
+
+            var progressValue = 0;
+            var interval = setInterval(function () {
+                progressValue += 10;
+                progressBar.style.width = progressValue + '%';
+                progressBar.setAttribute('aria-valuenow', progressValue);
+
+                if (progressValue >= 100) {
+                    clearInterval(interval);
+
+                    // Hide the loader and progress bar after completion
+                    setTimeout(function () {
+                        document.getElementById('loader').style.display = 'none';
+                        document.getElementById('progress-bar').style.display = 'none';
+
+                        // Close the modal after a delay
+                        myModal.hide();
+                    }, 500);
+                }
+            }, 500);
+        }
+    </script>
+
 
 </body>
 </html>
